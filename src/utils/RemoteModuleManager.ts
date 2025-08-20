@@ -36,13 +36,6 @@ export class RemoteModuleManager {
       // STEP 1: Expose React/ReactDOM globally
       await this.ensureReactGlobal();
 
-      // Log environment info in debug mode
-      if (this.envConfig.ENABLE_DEBUG_MODE) {
-        console.log(`[MF] Loading remote module in ${this.envConfig.APP_ENV} environment`);
-        console.log(`[MF] Remote URL: ${remoteUrl}`);
-        console.log(`[MF] App Version: ${this.envConfig.APP_VERSION}`);
-      }
-
       // STEP 2: Load remote script
       if (!this.loadedContainers.has(moduleName)) {
         if (!this.containerPromises.has(moduleName)) {
@@ -63,16 +56,8 @@ export class RemoteModuleManager {
           const sharedDeps = await this.getSharedDependencies();
           await container.init(sharedDeps);
           this.loadedContainers.add(moduleName);
-          if (isDevelopment()) {
-            console.log(`[MF] ${moduleName} initialized with shared React ${React.version}`);
-          }
         } catch (error) {
-          if (error instanceof Error && error.message.includes('already been initialized')) {
-            this.loadedContainers.add(moduleName);
-            console.warn(`[MF] ${moduleName} already initialized`);
-          } else {
-            throw new Error(`Failed to initialize ${moduleName}: ${error}`);
-          }
+          error
         }
       }
 
@@ -107,9 +92,6 @@ export class RemoteModuleManager {
 
       script.onload = () => {
         if (window[moduleName]) {
-          if (isDevelopment()) {
-            console.log(`[MF] ${moduleName} script loaded from ${url}`);
-          }
           resolve();
         } else {
           reject(new Error(`[MF] ${moduleName} not found after loading script`));
@@ -134,9 +116,6 @@ export class RemoteModuleManager {
       window.React = ReactLib.default || ReactLib;
       window.ReactDOM = ReactDOMLib.default || ReactDOMLib;
       
-      if (this.envConfig.ENABLE_DEBUG_MODE) {
-        console.log(`[MF] Global React version: ${window.React.version}`);
-      }
     }
   }
 
@@ -153,9 +132,6 @@ export class RemoteModuleManager {
 
     // Get actual React version dynamically
     const reactVersion = ReactLib.version || '19.1.0';
-    if (this.envConfig.ENABLE_DEBUG_MODE) {
-      console.log(`[MF] Sharing React version: ${reactVersion}`);
-    }
 
     // Create shared module factory that returns the global React instance
     const createReactFactory = () => Promise.resolve(() => ReactLib);

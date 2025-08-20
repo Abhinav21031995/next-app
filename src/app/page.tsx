@@ -1,24 +1,41 @@
 'use client';
 
-import React, { Suspense } from 'react';
+import React, { Suspense, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { MICRO_FRONTENDS } from '@/config/micro-frontends';
+import { LandingPage } from '@/components/Landing-Page/LandingPage';
 
 const RemoteComponent = dynamic(
   () => import('@/components/RemoteComponent'),
   { ssr: false }
 );
 
+const ExtractorComponent = dynamic(
+  () => import('@/components/RemoteComponent').then(mod => ({ 
+    default: (props: any) => <mod.default {...props} /> 
+  })),
+  { ssr: false }
+);
+
 export default function Home() {
+  const [showExtractor, setShowExtractor] = useState(false);
+
   React.useEffect(() => {
-    console.log('[Host App] React version:', React.version);
-    console.log('[Host App] React instance:', React);
+
+
+    // Listen for navigation events from the navbar
+    const handleNavigation = (event: CustomEvent) => {
+      if (event.detail?.path === '/extractor') {
+        setShowExtractor(true);
+      }
+    };
+    window.addEventListener('navigate', handleNavigation as any);
+    return () => window.removeEventListener('navigate', handleNavigation as any);
   }, []);
 
   return (
-    <main className="flex min-h-screen flex-col p-4 gap-4">
+    <main className="flex min-h-screen flex-col">
       <div className="w-full">
-        <h2 className="text-xl font-bold mb-4">React Navigation Bar</h2>
         <Suspense fallback={<div>Loading navigation...</div>}>
           <RemoteComponent 
             scope={MICRO_FRONTENDS.reactNav.scope}
@@ -27,15 +44,19 @@ export default function Home() {
           />
         </Suspense>
       </div>
-      <div className="w-full">
-        <h2 className="text-xl font-bold mb-4">Extractor Component</h2>
-        <Suspense fallback={<div>Loading extractor...</div>}>
-          <RemoteComponent 
-            scope={MICRO_FRONTENDS.extractor.scope}
-            module={MICRO_FRONTENDS.extractor.module}
-            url={MICRO_FRONTENDS.extractor.url}
-          />
-        </Suspense>
+      
+      <div className="flex-1">
+        {showExtractor ? (
+          <Suspense fallback={<div>Loading extractor...</div>}>
+            <ExtractorComponent 
+              scope={MICRO_FRONTENDS.extractor.scope}
+              module={MICRO_FRONTENDS.extractor.module}
+              url={MICRO_FRONTENDS.extractor.url}
+            />
+          </Suspense>
+        ) : (
+          <LandingPage />
+        )}
       </div>
     </main>
   );

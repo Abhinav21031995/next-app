@@ -20,10 +20,6 @@ class MicroFrontendErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
-  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Microfrontend Error:', error, errorInfo);
-  }
-
   public render() {
     if (this.state.hasError) {
       return (

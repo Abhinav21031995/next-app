@@ -1,4 +1,127 @@
-# Microfrontend Architecture - Integration Overview
+# Microfrontend Setup and Running Instructions
+
+This document outlines how to run the microfrontend applications in different modes - both as independent UIs and as integrated remote modules with Next.js.
+
+## Project Structure
+
+```
+Microfrontend/
+├── next-app/        # Host application (Next.js)
+├── react-nav/       # Navigation UI remote (React)
+└── extracator/      # Extractor UI remote (React)
+```
+
+## Running the Applications
+
+There are two modes of operation:
+
+### 1. Development Mode (Independent UIs)
+
+In this mode, each application runs independently with its own React instance. Use this when developing individual UIs.
+
+```bash
+# Start Navigation UI (runs on port 3002)
+cd react-nav
+npm start
+
+# Start Extractor UI (runs on port 3001)
+cd extractor
+npm start
+
+# Start Next.js app (runs on port 3000)
+cd next-app
+npm run dev
+```
+
+### 2. Integration Mode (With Next.js Host)
+
+In this mode, the remote applications are configured to work with the Next.js host application, sharing React instances.
+
+```bash
+# Start Navigation UI in remote mode
+cd react-nav
+npm run start:remote
+
+# Start Extractor UI in remote mode
+cd extractor
+npm run start:remote
+
+# Start Next.js host app
+cd next-app
+npm run dev
+```
+
+## Important Notes
+
+1. Port Configuration:
+   - Next.js host: Port 3000
+   - Navigation UI: Port 3002
+   - Extractor UI: Port 3001
+
+2. Running Order:
+   - Always start the remote applications (react-nav and extractor) first
+   - Then start the Next.js host application
+
+3. Mode Selection:
+   - Use `npm start` for independent development
+   - Use `npm run start:remote` when integrating with Next.js
+
+4. Development vs Remote Mode:
+   - Development mode (`npm start`): Eager loading enabled, independent React instance
+   - Remote mode (`npm run start:remote`): Eager loading disabled, shared React instance with host
+
+5. Troubleshooting:
+   - If you see module sharing errors in Next.js integration, ensure remotes are running in remote mode
+   - If you see React instance conflicts, verify all apps are using the same React version (^18.2.0)
+   - Clear browser cache if changes aren't reflecting
+
+## Building for Production
+
+```bash
+# Build Navigation UI
+cd react-nav
+npm run build
+
+# Build Extractor UI
+cd extractor
+npm run build
+
+# Build Next.js app
+cd next-app
+npm run build
+```
+
+## Environment Configuration
+
+Make sure the following environment variables are set in your Next.js application:
+
+```env
+NEXT_PUBLIC_MICROUI_NAVIGATION_REMOTE_URL=http://localhost:3002/remoteEntry.js
+NEXT_PUBLIC_MICROUI_CONTENT_REMOTE_URL=http://localhost:3001/remoteEntry.js
+```
+
+## Version Requirements
+
+- React: ^18.2.0
+- React DOM: ^18.2.0
+- Next.js: 14.0.3
+- Node.js: >=16.0.0
+
+## Additional Commands
+
+### Clean Install
+If you encounter any issues, try a clean installation:
+
+```bash
+# For each project directory:
+npm cache clean --force
+rm -rf node_modules
+rm package-lock.json
+npm install
+```
+
+### Development with Hot Reload
+All start commands include hot reloading by default. Changes will be reflected immediately in the browser.
 
 ## Applications Overview
 

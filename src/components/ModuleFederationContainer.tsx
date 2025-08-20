@@ -23,7 +23,6 @@ const loadRemoteComponent = async (config: MicroFrontendConfig) => {
       default: React_.memo(Component)
     };
   } catch (error) {
-    console.error(`Failed to load remote component [${config.scope}/${config.module}]:`, error);
     throw error;
   }
 };
