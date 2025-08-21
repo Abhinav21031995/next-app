@@ -34,8 +34,8 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="flex min-h-screen flex-col">
-      <div className="w-full">
+    <main className="flex min-h-screen flex-col overflow-hidden">
+      <div className="w-full h-[10vh] min-h-[64px] max-h-[80px] relative z-10">
         <Suspense fallback={<div>Loading navigation...</div>}>
           <RemoteComponent 
             scope={MICRO_FRONTENDS.reactNav.scope}
@@ -45,18 +45,23 @@ export default function Home() {
         </Suspense>
       </div>
       
-      <div className="flex-1">
-        {showExtractor ? (
-          <Suspense fallback={<div>Loading extractor...</div>}>
-            <ExtractorComponent 
-              scope={MICRO_FRONTENDS.extractor.scope}
-              module={MICRO_FRONTENDS.extractor.module}
-              url={MICRO_FRONTENDS.extractor.url}
-            />
-          </Suspense>
-        ) : (
-          <LandingPage />
-        )}
+      <div className="flex-1 flex flex-col">
+        <div className="flex-1 overflow-auto px-4 py-2 mb-4">
+          {showExtractor ? (
+            <Suspense fallback={<div>Loading extractor...</div>}>
+              <div className="max-w-[1200px] mx-auto mb-8">
+                <ExtractorComponent 
+                  scope={MICRO_FRONTENDS.extractor.scope}
+                  module={MICRO_FRONTENDS.extractor.module}
+                  url={MICRO_FRONTENDS.extractor.url}
+                />
+              </div>
+            </Suspense>
+          ) : (
+            <LandingPage />
+          )}
+        </div>
+        <div className="h-[5vh] bg-gray-100"></div>
       </div>
     </main>
   );

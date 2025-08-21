@@ -40,11 +40,11 @@ In this mode, the remote applications are configured to work with the Next.js ho
 ```bash
 # Start Navigation UI in remote mode
 cd react-nav
-npm run start:remote
+npm start:remote
 
 # Start Extractor UI in remote mode
 cd extractor
-npm run start:remote
+npm start:remote
 
 # Start Next.js host app
 cd next-app
