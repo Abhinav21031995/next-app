@@ -21,16 +21,34 @@ export default function Home() {
   const [showExtractor, setShowExtractor] = useState(false);
 
   React.useEffect(() => {
-
+    // Check URL on mount
+    const path = window.location.pathname;
+    if (path === '/extractor') {
+      setShowExtractor(true);
+    }
 
     // Listen for navigation events from the navbar
     const handleNavigation = (event: CustomEvent) => {
       if (event.detail?.path === '/extractor') {
         setShowExtractor(true);
+      } else if (event.detail?.path === '/') {
+        setShowExtractor(false);
       }
     };
+
+    // Listen for URL changes
+    const handleUrlChange = () => {
+      const path = window.location.pathname;
+      setShowExtractor(path === '/extractor');
+    };
+
     window.addEventListener('navigate', handleNavigation as any);
-    return () => window.removeEventListener('navigate', handleNavigation as any);
+    window.addEventListener('popstate', handleUrlChange);
+    
+    return () => {
+      window.removeEventListener('navigate', handleNavigation as any);
+      window.removeEventListener('popstate', handleUrlChange);
+    };
   }, []);
 
   return (
@@ -49,7 +67,7 @@ export default function Home() {
         <div className="flex-1 overflow-auto px-4 py-2 mb-4">
           {showExtractor ? (
             <Suspense fallback={<div>Loading extractor...</div>}>
-              <div className="max-w-[1200px] mx-auto mb-8">
+              <div className="max-w-[1200px] mx-auto mb-8" data-extractor-page="true">
                 <ExtractorComponent 
                   scope={MICRO_FRONTENDS.extractor.scope}
                   module={MICRO_FRONTENDS.extractor.module}

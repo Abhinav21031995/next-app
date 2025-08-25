@@ -1,7 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './LandingPage.module.css';
+import PopupDialog from '../PopupDialog';
 
 export const LandingPage: React.FC = () => {
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  const handleOpenPopup = () => {
+    setIsPopupOpen(true);
+  };
+
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+  };
+
   return (
     <div className={styles.container}>
       {/* Top Header */}
@@ -13,9 +24,10 @@ export const LandingPage: React.FC = () => {
 
       {/* Demo Button */}
       <div style={{ textAlign: 'center' }}>
-        <button className={styles.demoButton}>
-          Request a demo
+        <button className={styles.demoButton} onClick={handleOpenPopup}>
+          Request a data
         </button>
+        <PopupDialog isOpen={isPopupOpen} onClose={handleClosePopup} />
       </div>
 
       {/* Main Content */}

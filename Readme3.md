@@ -1,14 +1,30 @@
-# Microfrontend Setup and Running Instructions
+# Microfrontend Project - Overall Changes and Updates
 
-This document outlines how to run the microfrontend applications in different modes - both as independent UIs and as integrated remote modules with Next.js.
+This document provides a comprehensive overview of the entire microfrontend project, including recent changes, improvements, and implementation details across all applications.
 
-## Project Structure
+## Project Structure and Architecture
 
 ```
 Microfrontend/
-├── next-app/        # Host application (Next.js)
-├── react-nav/       # Navigation UI remote (React)
-└── extracator/      # Extractor UI remote (React)
+├── next-app/        # Host Application (Next.js, Port 3000)
+│   ├── src/
+│   │   ├── components/    # Shared components
+│   │   ├── context/      # Global state management
+│   │   └── pages/        # Application routes
+│   └── public/          # Static assets
+├── extractor/      # Selection UI Microfrontend (React, Port 3001)
+│   └── src/
+│       ├── components/   # Selection components
+│       └── models/       # Data models and types
+└── react-nav/      # Navigation Component (React, Port 3002)
+    └── src/
+        └── components/   # Navigation components
+
+Key Features:
+- Module Federation for component sharing
+- Context API for state management
+- TypeScript for type safety
+- CSS Modules for styling
 ```
 
 ## Running the Applications
@@ -33,21 +49,94 @@ cd next-app
 npm run dev
 ```
 
-### 2. Integration Mode (With Next.js Host)
+## Recent Updates (August 2025)
 
-In this mode, the remote applications are configured to work with the Next.js host application, sharing React instances.
+### 1. Cross-Application Improvements
 
+#### UI Enhancements
+- **Popup Dialog**
+  - Fixed scrollbar stability issues
+  - Added hardware acceleration
+  - Improved visual presentation
+  - Enhanced user experience with smooth scrolling
+
+- **Selection Management**
+  - Enhanced tree-list component with better type safety
+  - Improved selection wizard flow
+  - Added better state persistence
+  - Implemented bi-directional selection updates
+
+#### State Management
+- Implemented centralized state using Context API
+- Added cross-microfrontend communication
+- Enhanced state synchronization
+```typescript
+// Custom event system for cross-app communication
+window.dispatchEvent(new CustomEvent('extractorSelections', {
+  detail: { categories, geographies }
+}));
+
+// Context implementation
+const SelectionsContext = createContext<SelectionsContextType>({
+  selections: { categories: [], geographies: [] },
+  updateSelections: () => {}
+});
+```
+
+### 2. Technical Improvements
+
+#### Performance Optimizations
+- Added hardware acceleration for smooth animations
+- Implemented proper memoization
+- Optimized component re-renders
+- Enhanced bundle splitting
+- Added cleanup in useEffect hooks
+
+#### Accessibility Enhancements
+- Added ARIA labels
+- Improved keyboard navigation
+- Enhanced screen reader support
+- Better focus management
+- Added proper heading hierarchy
+
+#### Development Workflow
+- Enhanced TypeScript implementation
+- Improved error boundaries
+- Added comprehensive testing
+- Implemented better development guidelines
+
+## Running the Applications
+
+### 1. Development Mode (Independent UIs)
 ```bash
-# Start Navigation UI in remote mode
-cd react-nav
-npm start:remote
-
-# Start Extractor UI in remote mode
-cd extractor
-npm start:remote
-
-# Start Next.js host app
+# Start Next.js app (Port 3000)
 cd next-app
+npm run dev
+
+# Start Extractor UI (Port 3001)
+cd extractor
+npm run start:remote    # Use remote mode for module federation
+
+# Start Navigation UI (Port 3002)
+cd react-nav
+npm run start:remote    # Use remote mode for module federation
+```
+
+### 2. Production Mode
+```bash
+# Build all applications
+cd next-app && npm run build
+cd extractor && npm run build:remote  # Build for remote mode
+cd react-nav && npm run build:remote  # Build for remote mode
+```
+
+### Important Note
+- Always use `npm run start:remote` for extractor and react-nav when working with the integrated microfrontend setup
+- This ensures proper module federation and shared dependencies
+- The applications must be started in order:
+  1. Start extractor (Port 3001)
+  2. Start react-nav (Port 3002)
+  3. Start next-app (Port 3000)
 npm run dev
 ```
 

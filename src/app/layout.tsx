@@ -1,5 +1,8 @@
+'use client';
+
 import type { Metadata } from "next";
 import "./globals.css";
+import { SelectionsProvider } from "@/context/SelectionsContext";
 
 export const metadata: Metadata = {
   title: "Next.js Microfrontend",
@@ -14,7 +17,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {children}
+        <SelectionsProvider>
+          {children}
+        </SelectionsProvider>
       </body>
     </html>
   );

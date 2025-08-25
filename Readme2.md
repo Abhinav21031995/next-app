@@ -3,6 +3,34 @@
 ## Overview
 This Next.js application serves as the host container for the microfrontend architecture, integrating remote components from react-nav and extractor applications.
 
+## Recent Updates (August 2025)
+
+### 1. Popup Dialog Enhancements
+- Fixed scrollbar stability issues
+- Added hardware acceleration
+- Improved visual presentation
+- Enhanced user experience
+
+### 2. State Management Improvements
+- Implemented SelectionsContext
+- Added cross-microfrontend communication
+- Enhanced state persistence
+```typescript
+interface SelectionsContextType {
+  selections: {
+    categories: string[];
+    geographies: string[];
+  };
+  setSelections: (selections: Selections) => void;
+}
+```
+
+### 3. Performance Optimizations
+- Implemented proper memoization
+- Added cleanup in useEffect hooks
+- Optimized re-renders
+- Enhanced error boundaries
+
 ## Key Configurations
 
 ### 1. Module Federation Setup (next.config.ts)
